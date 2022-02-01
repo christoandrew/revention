@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: revention-app
+  labels:
+    app: revention-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: revention-app
+  template:
+    metadata:
+      labels:
+        app: revention-app
+    spec:
+      containers:
+        - name: revention-app
+          image: christoandrew/revention:0.0.1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log/
+                #- name: pos
+                #mountPath: /var/log/production.log.pos
+          ports:
+            - containerPort: 3000
+      initContainers:
+        - name: db-migrator
+          image: christoandrew/revention:0.0.1
+          command:
+            - bundle
+            - exec
+            - rake
+            - db:migrate
+              #- name: createpos
+              #image: busybox
+              #command: ["sh", "touch", "/var/log/production.pos"]
+              #volumeMounts:
+              #- name: varlog
+              #mountPath: /var/log/
+      volumes:
+       - name: varlog
+         hostPath:
+           path: /var/log/

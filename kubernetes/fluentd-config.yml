@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+  namespace: logging
+data:
+  fluent.conf: |
+    <source>
+        @type forward
+        port 24224
+    </source>
+
+    <source>
+       @type tail
+       @label @revention
+       refresh_interval 2
+       path /var/log/production.log
+       pos_file /var/log/production.log.pos
+       tag revention.prod
+       <parse>
+         @type json
+       </parse>
+    </source>
+
+    <label @revention>
+      <match **>
+        @type elasticsearch
+        @log_level debug
+        index_name revention
+        type_name revention
+        include_timestamp true
+        host elasticsearch
+        port 9200
+        validate_client_version true
+      </match>
+    </label>
+
