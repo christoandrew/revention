@@ -1,1 +1,1 @@
-Demo application on how to tail rails logs, push them to elastic search and visualize in Kibana.
+Demo application on how to tail rails logs with fluentd, push them to elastic search and visualize in Kibana.
